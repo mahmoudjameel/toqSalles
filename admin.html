@@ -1,0 +1,2650 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - لوحة تحكم طوق للتقسيط</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .admin-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border-radius: 20px 0 0 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .main-content {
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .mobile-menu-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                width: 280px;
+                z-index: 9998;
+                border-radius: 0;
+                transition: left 0.3s ease;
+                box-shadow: 5px 0 20px rgba(0,0,0,0.3);
+            }
+            
+            .sidebar.show {
+                left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .container-fluid {
+                padding: 0;
+            }
+            
+            .row {
+                margin: 0;
+            }
+            
+            /* Sidebar mobile improvements */
+            .sidebar .nav-link {
+                padding: 15px 20px;
+                font-size: 1rem;
+                border-radius: 0;
+                margin: 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            
+            .sidebar .nav-link:hover,
+            .sidebar .nav-link.active {
+                background: rgba(255,255,255,0.15);
+                transform: none;
+                padding-left: 25px;
+            }
+            
+            .sidebar .text-center h4 {
+                font-size: 1.3rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .sidebar .text-center p {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .card-header {
+                padding: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .form-control, .form-select {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .h2 {
+                font-size: 1.5rem;
+            }
+            
+            .h5 {
+                font-size: 1.1rem;
+            }
+            
+            /* Medium screen improvements */
+            .sidebar {
+                width: 300px;
+            }
+            
+            .mobile-menu-toggle {
+                top: 20px;
+                right: 20px;
+                padding: 12px;
+                font-size: 1.1rem;
+            }
+            
+            /* Form improvements */
+            .form-control, .form-select {
+                margin-bottom: 1rem;
+            }
+            
+            .row.mb-3 {
+                margin-bottom: 1.5rem !important;
+            }
+            
+            /* Button group improvements */
+            .d-flex.justify-content-between {
+                gap: 0.75rem;
+            }
+            
+            .btn {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+            
+            .card-header {
+                padding: 0.75rem;
+            }
+            
+            .card-body {
+                padding: 0.75rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .d-flex.justify-content-between .btn {
+                width: 100%;
+            }
+            
+            .col-md-6, .col-md-4, .col-md-3 {
+                margin-bottom: 1rem;
+            }
+            
+            .row.mb-3 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .feature-item, .benefit-item, .review-item {
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Form field improvements for small screens */
+            .form-control, .form-select {
+                margin-bottom: 0.75rem;
+            }
+            
+            .form-label {
+                margin-bottom: 0.4rem;
+            }
+            
+            /* Textarea improvements */
+            textarea.form-control {
+                min-height: 80px;
+                resize: vertical;
+            }
+            
+            /* Select improvements */
+            .form-select {
+                background-size: 16px 12px;
+            }
+            
+            /* Input group improvements */
+            .input-group {
+                margin-bottom: 0.75rem;
+            }
+            
+            .input-group-text {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+            
+            /* Extra small screen improvements */
+            .mobile-menu-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 10px;
+                font-size: 1rem;
+            }
+            
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            
+            .sidebar.show {
+                left: 0;
+            }
+            
+            .sidebar .nav-link {
+                padding: 18px 20px;
+                font-size: 1.1rem;
+            }
+            
+            .sidebar .text-center h4 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .sidebar .text-center p {
+                font-size: 1rem;
+            }
+            
+            /* Form improvements for small screens */
+            .form-control, .form-select {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 12px 15px;
+            }
+            
+            .form-label {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            /* Card improvements */
+            .card {
+                border-radius: 15px;
+                margin-bottom: 1.5rem;
+            }
+            
+            .card-header {
+                border-radius: 15px 15px 0 0;
+                padding: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            /* Button improvements */
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+                border-radius: 10px;
+            }
+        }
+        
+        /* Overlay for mobile menu */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9997;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        /* Enhanced Form Styling */
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+        }
+        
+        /* Card Enhancements */
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 700;
+        }
+        
+        .card-header h5 {
+            margin: 0;
+            color: var(--dark-color);
+        }
+        
+        /* Button Enhancements */
+        .btn {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Status Messages Responsive */
+        #statusMessages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+        
+        #statusMessages .alert {
+            margin-bottom: 0.5rem;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: slideInRight 0.3s ease;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            #statusMessages {
+                top: 70px;
+                right: 15px;
+                left: 15px;
+                max-width: none;
+            }
+            
+            #statusMessages .alert {
+                font-size: 0.9rem;
+                padding: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            #statusMessages {
+                top: 60px;
+                right: 10px;
+                left: 10px;
+            }
+            
+            #statusMessages .alert {
+                font-size: 0.85rem;
+                padding: 0.5rem;
+            }
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .preview-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .preview-section h6 {
+            color: var(--dark-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .preview-section p {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        
+        .preview-section strong {
+            color: var(--primary-color);
+        }
+        
+        /* Social Media Section Styling */
+        .social-media-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .social-media-item:hover {
+            background: #ffffff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .social-media-item .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .social-media-item .form-control,
+        .social-media-item .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-media-item .form-control:focus,
+        .social-media-item .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(58, 111, 143, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        /* Color Picker Styling */
+        .form-control-color {
+            width: 100%;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control-color:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Platform Status Indicators */
+        .social-media-item .form-select[id*="Status"] {
+            font-weight: 600;
+        }
+        
+        .social-media-item .form-select[id*="Status"] option[value="active"] {
+            color: #28a745;
+        }
+        
+        .social-media-item .form-select[id*="Status"] option[value="inactive"] {
+            color: #dc3545;
+        }
+        
+        /* Responsive Social Media */
+        @media (max-width: 767.98px) {
+            .social-media-item {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .social-media-item .col-md-2,
+            .social-media-item .col-md-4 {
+                margin-bottom: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            .social-media-item {
+                padding: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .social-media-item .row {
+                margin: 0;
+            }
+            
+            .social-media-item .col-md-2,
+            .social-media-item .col-md-4 {
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* Preview Responsive */
+        @media (max-width: 767.98px) {
+            .preview-section {
+                padding: 0.75rem;
+                margin-top: 0.75rem;
+            }
+            
+            .preview-section h6 {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .preview-section p {
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            .preview-section {
+                padding: 0.5rem;
+                margin-top: 0.5rem;
+            }
+            
+            .preview-section h6 {
+                font-size: 0.95rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .preview-section p {
+                font-size: 0.85rem;
+                margin-bottom: 0.4rem;
+            }
+        }
+        
+        /* Login Screen Styles */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+        }
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        
+        .login-header {
+            margin-bottom: 2rem;
+        }
+        
+        .login-logo {
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-logo .logo-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-logo h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        .login-header h3 {
+            color: var(--dark-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+        }
+        
+        .login-header p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .login-form {
+            text-align: right;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(58, 111, 143, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .password-input-group {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .password-toggle:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(58, 111, 143, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(58, 111, 143, 0.4);
+        }
+        
+        .btn-login:active {
+            transform: translateY(-1px);
+        }
+        
+        .login-footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .login-footer p {
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .credentials-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background: rgba(58, 111, 143, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(58, 111, 143, 0.2);
+        }
+        
+        .credentials-info span {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+        }
+        
+        .credentials-info strong {
+            color: var(--primary-color);
+        }
+        
+        /* Login Responsive */
+        @media (max-width: 767.98px) {
+            .login-container {
+                padding: 1rem;
+            }
+            
+            .login-card {
+                padding: 2rem;
+            }
+            
+            .login-logo .logo-img {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .login-logo h2 {
+                font-size: 1.6rem;
+            }
+            
+            .login-header h3 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            .login-container {
+                padding: 0.5rem;
+            }
+            
+            .login-card {
+                padding: 1.5rem;
+            }
+            
+            .login-logo .logo-img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .login-logo h2 {
+                font-size: 1.4rem;
+            }
+            
+            .login-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .form-control {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.95rem;
+            }
+            
+            .btn-login {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <img src="Test.png" alt="طوق للتقسيط" class="logo-img">
+                        <h2>طوق للتقسيط</h2>
+                    </div>
+                    <h3>تسجيل الدخول للوحة التحكم</h3>
+                    <p>أدخل بيانات الدخول للوصول إلى لوحة التحكم</p>
+                </div>
+                
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope me-2"></i>البريد الإلكتروني
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="أدخل بريدك الإلكتروني" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>كلمة المرور
+                        </label>
+                        <div class="password-input-group">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="أدخل كلمة المرور" required>
+                            <button type="button" class="password-toggle" id="passwordToggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="login-footer">
+                    <p class="text-muted">أدخل بيانات الدخول للوصول إلى لوحة التحكم</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Admin Panel (Hidden by default) -->
+    <div class="admin-container" id="adminPanel" style="display: none;">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 p-0">
+                <div class="sidebar p-4">
+                    <div class="text-center mb-4">
+                        <h4><i class="fas fa-crown me-2"></i>طوق للتقسيط</h4>
+                        <p class="text-muted">لوحة التحكم</p>
+                    </div>
+                    
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#hero" data-section="hero">
+                            <i class="fas fa-home me-2"></i>الصفحة الرئيسية
+                        </a>
+                        <a class="nav-link" href="#features" data-section="features">
+                            <i class="fas fa-star me-2"></i>المميزات
+                        </a>
+                        <a class="nav-link" href="#reviews" data-section="reviews">
+                            <i class="fas fa-comments me-2"></i>المراجعات
+                        </a>
+                        <a class="nav-link" href="#banner" data-section="banner">
+                            <i class="fas fa-bullhorn me-2"></i>قسم البانر
+                        </a>
+                        <a class="nav-link" href="#stats" data-section="stats">
+                            <i class="fas fa-chart-bar me-2"></i>الإحصائيات
+                        </a>
+                        <a class="nav-link" href="#benefits" data-section="benefits">
+                            <i class="fas fa-gift me-2"></i>المميزات الإضافية
+                        </a>
+                        <a class="nav-link" href="#about" data-section="about">
+                            <i class="fas fa-info-circle me-2"></i>عن الشركة
+                        </a>
+                        <a class="nav-link" href="#order" data-section="order">
+                            <i class="fas fa-edit me-2"></i>نموذج الطلب
+                        </a>
+                        <a class="nav-link" href="#cta" data-section="cta">
+                            <i class="fas fa-phone me-2"></i>روابط التواصل
+                        </a>
+                        <a class="nav-link" href="#footer" data-section="footer">
+                            <i class="fas fa-shoe-prints me-2"></i>Footer
+                        </a>
+                        <a class="nav-link" href="#social-media" data-section="social-media">
+                            <i class="fas fa-share-alt me-2"></i>وسائل التواصل الاجتماعي
+                        </a>
+                        <a class="nav-link" href="#moving-text" data-section="moving-text">
+                            <i class="fas fa-scroll me-2"></i>النص المتحرك
+                        </a>
+                        <a class="nav-link" href="#settings" data-section="settings">
+                            <i class="fas fa-cog me-2"></i>الإعدادات العامة
+                        </a>
+                        
+                        <!-- Logout Button -->
+                        <div class="mt-4 pt-3 border-top">
+                            <button class="btn btn-outline-danger w-100" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج
+                            </button>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="main-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-edit me-2"></i>تعديل محتوى الموقع</h2>
+                        <div>
+                            <button class="btn btn-success me-2" onclick="saveAllChanges()">
+                                <i class="fas fa-save me-2"></i>حفظ جميع التغييرات
+                            </button>
+                            <button class="btn btn-info" onclick="previewChanges()">
+                                <i class="fas fa-eye me-2"></i>معاينة التغييرات
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Messages -->
+                    <div id="statusMessages"></div>
+                    
+                    <!-- Hero Section Editor -->
+                    <div class="card mb-4" id="hero">
+                        <div class="card-header">
+                            <h5><i class="fas fa-home me-2"></i>الصفحة الرئيسية</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان الرئيسي</label>
+                                    <input type="text" class="form-control" id="heroTitle" value="طوق للتقسيط">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان الفرعي</label>
+                                    <input type="text" class="form-control" id="heroSubtitle" value="حلول ذكية لجميع مشاكل التقسيط">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان الثانوي</label>
+                                    <input type="text" class="form-control" id="heroMainHeading" value="ما تحتاج تعيش حرب نفسية مع راتبك!">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">رقم الواتساب</label>
+                                    <input type="text" class="form-control" id="whatsappNumber" value="+972592799888">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reviews Editor -->
+                    <div class="card mb-4" id="reviews">
+                        <div class="card-header">
+                            <h5><i class="fas fa-comments me-2"></i>المراجعات</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">عنوان قسم المراجعات</label>
+                                    <input type="text" class="form-control" id="reviewsTitle" value="آراء عملائنا الكرام">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">وصف قسم المراجعات</label>
+                                    <input type="text" class="form-control" id="reviewsDescription" value="اكتشف ما يقوله عملاؤنا عن تجربتهم مع طوق للتقسيط">
+                                </div>
+                            </div>
+                            
+                            <!-- Review 1 -->
+                            <div class="row mb-3 review-item">
+                                <div class="col-md-8">
+                                    <label class="form-label">المراجعة الأولى</label>
+                                    <textarea class="form-control" id="review1Text" rows="3">تجربة رائعة مع طوق للتقسيط! حصلت على iPhone جديد بتقسيط سهل وميسر. الموافقة كانت فورية والخدمة ممتازة. أنصح الجميع بالتجربة!</textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">اسم المراجع</label>
+                                    <input type="text" class="form-control" id="review1Name" value="أحمد محمد">
+                                    <label class="form-label mt-2">المدينة</label>
+                                    <input type="text" class="form-control" id="review1City" value="الرياض">
+                                </div>
+                            </div>
+                            
+                            <!-- Review 2 -->
+                            <div class="row mb-3 review-item">
+                                <div class="col-md-8">
+                                    <label class="form-label">المراجعة الثانية</label>
+                                    <textarea class="form-control" id="review2Text" rows="3">طوق للتقسيط غير حياتي! حصلت على جميع الأجهزة المنزلية بتقسيط ممتاز. الأسعار منافسة والخصومات كبيرة. شكراً لكم!</textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">اسم المراجع</label>
+                                    <input type="text" class="form-control" id="review2Name" value="سارة أحمد">
+                                    <label class="form-label mt-2">المدينة</label>
+                                    <input type="text" class="form-control" id="review2City" value="جدة">
+                                </div>
+                            </div>
+                            
+                            <!-- Review 3 -->
+                            <div class="row mb-3 review-item">
+                                <div class="col-md-8">
+                                    <label class="form-label">المراجعة الثالثة</label>
+                                    <textarea class="form-control" id="review3Text" rows="3">خدمة عملاء ممتازة! فريق طوق للتقسيط ساعدني في اختيار أفضل الأجهزة بأسعار مناسبة. التقسيط سهل والموافقة سريعة.</textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">اسم المراجع</label>
+                                    <input type="text" class="form-control" id="review3Name" value="محمد علي">
+                                    <label class="form-label mt-2">المدينة</label>
+                                    <input type="text" class="form-control" id="review3City" value="الدمام">
+                                </div>
+                            </div>
+                            
+                            <!-- Review 4 -->
+                            <div class="row mb-3 review-item">
+                                <div class="col-md-8">
+                                    <label class="form-label">المراجعة الرابعة</label>
+                                    <textarea class="form-control" id="review4Text" rows="3">طوق للتقسيط منصة موثوقة وممتازة! حصلت على iPad بتقسيط سهل. الموافقة فورية والخدمة سريعة. شكراً لكم!</textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">اسم المراجع</label>
+                                    <input type="text" class="form-control" id="review4Name" value="فاطمة حسن">
+                                    <label class="form-label mt-2">المدينة</label>
+                                    <input type="text" class="form-control" id="review4City" value="مكة">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Features Editor -->
+                    <div class="card mb-4" id="features">
+                        <div class="card-header">
+                            <h5><i class="fas fa-star me-2"></i>المميزات</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="featuresContainer">
+                                <!-- Feature 1 -->
+                                <div class="row mb-3 feature-item">
+                                    <div class="col-md-3">
+                                        <label class="form-label">أيقونة الميزة 1</label>
+                                        <select class="form-select" id="feature1Icon">
+                                            <option value="fas fa-heart">❤️ قلب</option>
+                                            <option value="fas fa-rocket">🚀 صاروخ</option>
+                                            <option value="fas fa-gem">💎 جوهرة</option>
+                                            <option value="fas fa-star">⭐ نجمة</option>
+                                            <option value="fas fa-shield-alt">🛡️ درع</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">عنوان الميزة 1</label>
+                                        <input type="text" class="form-control" id="feature1Title" value="تقسيط مريح وسهل">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">وصف الميزة 1</label>
+                                        <input type="text" class="form-control" id="feature1Desc" value="استرخي واستمتع بالشراء">
+                                    </div>
+                                </div>
+                                
+                                <!-- Feature 2 -->
+                                <div class="row mb-3 feature-item">
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="feature2Icon">
+                                            <option value="fas fa-rocket">🚀 صاروخ</option>
+                                            <option value="fas fa-heart">❤️ قلب</option>
+                                            <option value="fas fa-gem">💎 جوهرة</option>
+                                            <option value="fas fa-star">⭐ نجمة</option>
+                                            <option value="fas fa-shield-alt">🛡️ درع</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="feature2Title" value="موافقة فورية">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="feature2Desc" value="خلال دقائق معدودة">
+                                    </div>
+                                </div>
+                                
+                                <!-- Feature 3 -->
+                                <div class="row mb-3 feature-item">
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="feature3Icon">
+                                            <option value="fas fa-gem">💎 جوهرة</option>
+                                            <option value="fas fa-heart">❤️ قلب</option>
+                                            <option value="fas fa-rocket">🚀 صاروخ</option>
+                                            <option value="fas fa-star">⭐ نجمة</option>
+                                            <option value="fas fa-shield-alt">🛡️ درع</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="feature3Title" value="أسعار ذهبية">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="feature3Desc" value="أفضل الأسعار في السوق">
+                                    </div>
+                                </div>
+                                
+                                <!-- Feature 4 -->
+                                <div class="row mb-3 feature-item">
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="feature4Icon">
+                                            <option value="fas fa-star">⭐ نجمة</option>
+                                            <option value="fas fa-heart">❤️ قلب</option>
+                                            <option value="fas fa-rocket">🚀 صاروخ</option>
+                                            <option value="fas fa-gem">💎 جوهرة</option>
+                                            <option value="fas fa-shield-alt">🛡️ درع</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="feature4Title" value="خدمة عملاء متميزة">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="feature4Desc" value="نحن هنا لمساعدتك">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner Editor -->
+                    <div class="card mb-4" id="banner">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bullhorn me-2"></i>قسم البانر</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان الرئيسي</label>
+                                    <input type="text" class="form-control" id="bannerTitle" value="اطلب اللي بخاطرك من طوق للتقسيط">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان الفرعي</label>
+                                    <input type="text" class="form-control" id="bannerSubtitle" value="والموافقة فورية إذا كنت">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">النص المميز</label>
+                                    <input type="text" class="form-control" id="bannerHighlight" value="سعودي موظف عمرك 20+">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">نص زر الطلب</label>
+                                    <input type="text" class="form-control" id="bannerButtonText" value="للطلب اضغط هنا">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Editor -->
+                    <div class="card mb-4" id="stats">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-bar me-2"></i>الإحصائيات</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">الدفعة الأولى</label>
+                                    <input type="text" class="form-control" id="stat1Number" value="0">
+                                    <input type="text" class="form-control mt-2" id="stat1Label" value="دفعة أولى">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">مدة التقسيط</label>
+                                    <input type="text" class="form-control" id="stat2Number" value="36">
+                                    <input type="text" class="form-control mt-2" id="stat2Label" value="شهر تقسيط مريح وسهل">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">ضمان الجودة</label>
+                                    <input type="text" class="form-control" id="stat3Number" value="100%">
+                                    <input type="text" class="form-control mt-2" id="stat3Label" value="ضمان الجودة">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Benefits Editor -->
+                    <div class="card mb-4" id="benefits">
+                        <div class="card-header">
+                            <h5><i class="fas fa-gift me-2"></i>المميزات الإضافية</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">عنوان قسم المميزات</label>
+                                    <input type="text" class="form-control" id="benefitsTitle" value="مميزات تجعلك تختارنا">
+                                </div>
+                            </div>
+                            
+                            <!-- Benefit 1 -->
+                            <div class="row mb-3 benefit-item">
+                                <div class="col-md-3">
+                                    <label class="form-label">أيقونة الميزة 1</label>
+                                    <select class="form-select" id="benefit1Icon">
+                                        <option value="fas fa-smile">😊 ابتسامة</option>
+                                        <option value="fas fa-gift">🎁 هدية</option>
+                                        <option value="fas fa-crown">👑 تاج</option>
+                                        <option value="fas fa-mobile-alt">📱 جوال</option>
+                                        <option value="fas fa-shield-alt">🛡️ درع</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label">نص الميزة 1</label>
+                                    <input type="text" class="form-control" id="benefit1Text" value="تقسيط مريح وسهل">
+                                </div>
+                            </div>
+                            
+                            <!-- Benefit 2 -->
+                            <div class="row mb-3 benefit-item">
+                                <div class="col-md-3">
+                                    <select class="form-select" id="benefit2Icon">
+                                        <option value="fas fa-gift">🎁 هدية</option>
+                                        <option value="fas fa-smile">😊 ابتسامة</option>
+                                        <option value="fas fa-crown">👑 تاج</option>
+                                        <option value="fas fa-mobile-alt">📱 جوال</option>
+                                        <option value="fas fa-shield-alt">🛡️ درع</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="benefit2Text" value="هدايا مجانية مع كل طلب">
+                                </div>
+                            </div>
+                            
+                            <!-- Benefit 3 -->
+                            <div class="row mb-3 benefit-item">
+                                <div class="col-md-3">
+                                    <select class="form-select" id="benefit3Icon">
+                                        <option value="fas fa-crown">👑 تاج</option>
+                                        <option value="fas fa-smile">😊 ابتسامة</option>
+                                        <option value="fas fa-gift">🎁 هدية</option>
+                                        <option value="fas fa-mobile-alt">📱 جوال</option>
+                                        <option value="fas fa-shield-alt">🛡️ درع</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="benefit3Text" value="أسعار لا تقبل المنافسة">
+                                </div>
+                            </div>
+                            
+                            <!-- Benefit 4 -->
+                            <div class="row mb-3 benefit-item">
+                                <div class="col-md-3">
+                                    <select class="form-select" id="benefit4Icon">
+                                        <option value="fas fa-mobile-alt">📱 جوال</option>
+                                        <option value="fas fa-smile">😊 ابتسامة</option>
+                                        <option value="fas fa-gift">🎁 هدية</option>
+                                        <option value="fas fa-crown">👑 تاج</option>
+                                        <option value="fas fa-shield-alt">🛡️ درع</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="benefit4Text" value="جميع الأجهزة والمنتجات">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- About Section Editor -->
+                    <div class="card mb-4" id="about">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>عن الشركة</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">عنوان القسم</label>
+                                    <input type="text" class="form-control" id="aboutTitle" value="عن طوق للتقسيط | راحتك أولوية">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان الفرعي</label>
+                                    <input type="text" class="form-control" id="aboutSubtitle" value="لماذا طوق للتقسيط؟">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label class="form-label">وصف الشركة</label>
+                                    <textarea class="form-control" id="aboutDescription" rows="4">طوق للتقسيط هي شركة رائدة في مجال التقسيط المريح في المملكة العربية السعودية. نؤمن بأن الحياة يجب أن تكون مريحة وخالية من الضغوط المالية.</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Form Editor -->
+                    <div class="card mb-4" id="order">
+                        <div class="card-header">
+                            <h5><i class="fas fa-edit me-2"></i>نموذج الطلب</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">عنوان قسم الطلب</label>
+                                    <input type="text" class="form-control" id="orderTitle" value="تقديم الطلب">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">وصف قسم الطلب</label>
+                                    <input type="text" class="form-control" id="orderDescription" value="اطلب جهازك المفضل الآن واستمتع بأسهل طرق التقسيط">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">نص زر الإرسال</label>
+                                    <input type="text" class="form-control" id="orderButtonText" value="إرسال الطلب على الواتساب">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">رسالة تأكيد</label>
+                                    <input type="text" class="form-control" id="orderSuccessMessage" value="تم إرسال طلبك بنجاح! سيتم فتح الواتساب الآن.">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">نص رسالة الواتساب</label>
+                                    <textarea class="form-control" id="whatsappMessageTemplate" rows="4">مرحباً، أريد تقديم طلب تقسيط مع طوق للتقسيط
+
+📋 *تفاصيل الطلب:*
+👤 *الاسم:* [الاسم]
+🆔 *رقم الهوية:* [رقم الهوية]
+📱 *رقم الجوال:* [رقم الجوال]
+💰 *الراتب الشهري:* [الراتب] ريال
+💻 *نوع الجهاز:* [نوع الجهاز]
+📝 *ملاحظات:* [الملاحظات]
+
+أريد معلومات عن شروط التقسيط المتاحة. شكراً لكم! 🚀</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">خيارات الأجهزة</label>
+                                    <textarea class="form-control" id="deviceOptions" rows="4">جوال - iPhone
+جوال - Samsung
+لابتوب
+تابليت
+أجهزة منزلية
+أخرى</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Links Editor -->
+                    <div class="card mb-4" id="cta">
+                        <div class="card-header">
+                            <h5><i class="fas fa-phone me-2"></i>روابط التواصل</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">عنوان قسم CTA</label>
+                                    <input type="text" class="form-control" id="ctaTitle" value="طوق للتقسيط مو بس تقسيط!">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">وصف CTA</label>
+                                    <input type="text" class="form-control" id="ctaDescription" value="معنا الحياة تصير مريحة، بأسعار منافسة وخدمة متميزة!">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">نص زر الواتساب</label>
+                                    <input type="text" class="form-control" id="whatsappButtonText" value="تواصل معنا الآن">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص زر الاتصال</label>
+                                    <input type="text" class="form-control" id="callButtonText" value="اتصل بنا">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص زر التسوق</label>
+                                    <input type="text" class="form-control" id="shopButtonText" value="تسوق الآن">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer Editor -->
+                    <div class="card mb-4" id="footer">
+                        <div class="card-header">
+                            <h5><i class="fas fa-shoe-prints me-2"></i>Footer</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">وصف الشركة في Footer</label>
+                                    <textarea class="form-control" id="footerDescription" rows="3">منصة التقسيط الميسر للأجهزة الإلكترونية والمنزلية في المملكة العربية السعودية. نقدم أفضل الخدمات وأسهل طرق التقسيط لعملائنا الكرام.</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان التفصيلي</label>
+                                    <textarea class="form-control" id="footerAddress" rows="3">الرياض، المملكة العربية السعودية
+شارع الملك فهد، برج طوق للتقسيط</textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">روابط سريعة - العنوان</label>
+                                    <input type="text" class="form-control" id="footerQuickLinksTitle" value="روابط سريعة">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">الخدمات - العنوان</label>
+                                    <input type="text" class="form-control" id="footerServicesTitle" value="خدماتنا">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">معلومات الاتصال - العنوان</label>
+                                    <input type="text" class="form-control" id="footerContactTitle" value="معلومات الاتصال">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">روابط الخدمات</label>
+                                    <textarea class="form-control" id="footerServices" rows="4">تقسيط الجوالات
+تقسيط اللابتوبات
+تقسيط الأجهزة المنزلية
+تقسيط الأجهزة اللوحية
+تقسيط الأجهزة الذكية</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">روابط سريعة</label>
+                                    <textarea class="form-control" id="footerQuickLinks" rows="4">الرئيسية
+عن طوق للتقسيط
+تقديم الطلب
+سياسة الخصوصية
+سياسة الاستبدال</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media Editor -->
+                    <div class="card mb-4" id="social-media">
+                        <div class="card-header">
+                            <h5><i class="fas fa-share-alt me-2"></i>وسائل التواصل الاجتماعي</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">عنوان قسم وسائل التواصل</label>
+                                    <input type="text" class="form-control" id="socialMediaTitle" value="تواصل معنا على وسائل التواصل الاجتماعي">
+                                </div>
+                            </div>
+                            
+                            <!-- WhatsApp -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة الواتساب</label>
+                                    <select class="form-select" id="whatsappIcon">
+                                        <option value="fab fa-whatsapp">📱 WhatsApp</option>
+                                        <option value="fab fa-whatsapp-square">📱 WhatsApp Square</option>
+                                        <option value="fas fa-comment-dots">💬 تعليق</option>
+                                        <option value="fas fa-phone">📞 هاتف</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص الواتساب</label>
+                                    <input type="text" class="form-control" id="whatsappText" value="واتساب">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط الواتساب</label>
+                                    <input type="text" class="form-control" id="whatsappLink" value="https://wa.me/972592799888">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="whatsappStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Twitter/X -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة تويتر</label>
+                                    <select class="form-select" id="twitterIcon">
+                                        <option value="fab fa-twitter">🐦 Twitter</option>
+                                        <option value="fab fa-twitter-square">🐦 Twitter Square</option>
+                                        <option value="fab fa-x-twitter">𝕏 X (Twitter)</option>
+                                        <option value="fas fa-bird">🐦 طائر</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص تويتر</label>
+                                    <input type="text" class="form-control" id="twitterText" value="تويتر">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط تويتر</label>
+                                    <input type="text" class="form-control" id="twitterLink" value="https://twitter.com/touq_installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="twitterStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Instagram -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة الانستغرام</label>
+                                    <select class="form-select" id="instagramIcon">
+                                        <option value="fab fa-instagram">📸 Instagram</option>
+                                        <option value="fab fa-instagram-square">📸 Instagram Square</option>
+                                        <option value="fas fa-camera">📷 كاميرا</option>
+                                        <option value="fas fa-image">🖼️ صورة</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص الانستغرام</label>
+                                    <input type="text" class="form-control" id="instagramText" value="انستغرام">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط الانستغرام</label>
+                                    <input type="text" class="form-control" id="instagramLink" value="https://instagram.com/touq_installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="instagramStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Snapchat -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة السناب شات</label>
+                                    <select class="form-select" id="snapchatIcon">
+                                        <option value="fab fa-snapchat">👻 Snapchat</option>
+                                        <option value="fab fa-snapchat-square">👻 Snapchat Square</option>
+                                        <option value="fas fa-ghost">👻 شبح</option>
+                                        <option value="fas fa-camera-retro">📷 كاميرا قديمة</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص السناب شات</label>
+                                    <input type="text" class="form-control" id="snapchatText" value="سناب شات">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط السناب شات</label>
+                                    <input type="text" class="form-control" id="snapchatLink" value="https://snapchat.com/add/touq_installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="snapchatStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Facebook -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة فيسبوك</label>
+                                    <select class="form-select" id="facebookIcon">
+                                        <option value="fab fa-facebook">📘 Facebook</option>
+                                        <option value="fab fa-facebook-square">📘 Facebook Square</option>
+                                        <option value="fab fa-facebook-f">📘 Facebook F</option>
+                                        <option value="fas fa-thumbs-up">👍 إعجاب</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص فيسبوك</label>
+                                    <input type="text" class="form-control" id="facebookText" value="فيسبوك">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط فيسبوك</label>
+                                    <input type="text" class="form-control" id="facebookLink" value="https://facebook.com/touq.installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="facebookStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- YouTube -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة يوتيوب</label>
+                                    <select class="form-select" id="youtubeIcon">
+                                        <option value="fab fa-youtube">📺 YouTube</option>
+                                        <option value="fab fa-youtube-square">📺 YouTube Square</option>
+                                        <option value="fab fa-youtube-play">📺 YouTube Play</option>
+                                        <option value="fas fa-play-circle">▶️ تشغيل</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص يوتيوب</label>
+                                    <input type="text" class="form-control" id="youtubeText" value="يوتيوب">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط يوتيوب</label>
+                                    <input type="text" class="form-control" id="youtubeLink" value="https://youtube.com/@touq_installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="youtubeStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- LinkedIn -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة لينكد إن</label>
+                                    <select class="form-select" id="linkedinIcon">
+                                        <option value="fab fa-linkedin">💼 LinkedIn</option>
+                                        <option value="fab fa-linkedin-in">💼 LinkedIn In</option>
+                                        <option value="fab fa-linkedin-square">💼 LinkedIn Square</option>
+                                        <option value="fas fa-briefcase">💼 حقيبة</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص لينكد إن</label>
+                                    <input type="text" class="form-control" id="linkedinText" value="لينكد إن">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط لينكد إن</label>
+                                    <input type="text" class="form-control" id="linkedinLink" value="https://linkedin.com/company/touq-installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="linkedinStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- TikTok -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة تيك توك</label>
+                                    <select class="form-select" id="tiktokIcon">
+                                        <option value="fab fa-tiktok">🎵 TikTok</option>
+                                        <option value="fas fa-music">🎵 موسيقى</option>
+                                        <option value="fas fa-play">▶️ تشغيل</option>
+                                        <option value="fas fa-video">📹 فيديو</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص تيك توك</label>
+                                    <input type="text" class="form-control" id="tiktokText" value="تيك توك">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط تيك توك</label>
+                                    <input type="text" class="form-control" id="tiktokLink" value="https://tiktok.com/@touq_installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="tiktokStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Telegram -->
+                            <div class="row mb-3 social-media-item">
+                                <div class="col-md-2">
+                                    <label class="form-label">أيقونة تليجرام</label>
+                                    <select class="form-select" id="telegramIcon">
+                                        <option value="fab fa-telegram">📬 Telegram</option>
+                                        <option value="fab fa-telegram-plane">📬 Telegram Plane</option>
+                                        <option value="fas fa-paper-plane">📬 طائرة ورقية</option>
+                                        <option value="fas fa-envelope">✉️ مغلف</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">نص تليجرام</label>
+                                    <input type="text" class="form-control" id="telegramText" value="تليجرام">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">رابط تليجرام</label>
+                                    <input type="text" class="form-control" id="telegramLink" value="https://t.me/touq_installment">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-select" id="telegramStatus">
+                                        <option value="active">مفعل</option>
+                                        <option value="inactive">معطل</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Settings -->
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">نمط العرض</label>
+                                    <select class="form-select" id="socialMediaStyle">
+                                        <option value="horizontal">أفقي (صف واحد)</option>
+                                        <option value="vertical">عمودي (عمود واحد)</option>
+                                        <option value="grid">شبكة (2×2)</option>
+                                        <option value="circular">دائري</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">حجم الأيقونات</label>
+                                    <select class="form-select" id="socialMediaSize">
+                                        <option value="small">صغير (16px)</option>
+                                        <option value="medium">متوسط (24px)</option>
+                                        <option value="large">كبير (32px)</option>
+                                        <option value="xlarge">كبير جداً (48px)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">لون الأيقونات</label>
+                                    <input type="color" class="form-control form-control-color" id="socialMediaColor" value="#3A6F8F">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">لون الخلفية</label>
+                                    <input type="color" class="form-control form-control-color" id="socialMediaBgColor" value="#F7F5F0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Moving Text Editor -->
+                    <div class="card mb-4" id="moving-text">
+                        <div class="card-header">
+                            <h5><i class="fas fa-scroll me-2"></i>النص المتحرك</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">النص الأول</label>
+                                    <input type="text" class="form-control" id="movingText1" value="✨ طوق للتقسيط تقسيط سهل وميسر ✨">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">النص الثاني</label>
+                                    <input type="text" class="form-control" id="movingText2" value="🚀 موافقة فورية 🚀">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">النص الثالث</label>
+                                    <input type="text" class="form-control" id="movingText3" value="💎 أسعار لا تقبل المنافسة 💎">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">النص الرابع</label>
+                                    <input type="text" class="form-control" id="movingText4" value="🎁 هدايا مجانية 🎁">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">النص الخامس</label>
+                                    <input type="text" class="form-control" id="movingText5" value="📱 جميع الأجهزة الإلكترونية 📱">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">النص السادس</label>
+                                    <input type="text" class="form-control" id="movingText6" value="⚡ خدمة عملاء 24/7 ⚡">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">النص السابع</label>
+                                    <input type="text" class="form-control" id="movingText7" value="🔒 أمان وموثوقية تامة 🔒">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">النص الثامن</label>
+                                    <input type="text" class="form-control" id="movingText8" value="💳 بدون كفيل أو ضامن 💳">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">سرعة الحركة (ثواني)</label>
+                                    <input type="number" class="form-control" id="movingTextSpeed" value="30" min="10" max="60">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- General Settings -->
+                    <div class="card mb-4" id="settings">
+                        <div class="card-header">
+                            <h5><i class="fas fa-cog me-2"></i>الإعدادات العامة</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">اسم الشركة في Footer</label>
+                                    <input type="text" class="form-control" id="footerCompanyName" value="طوق للتقسيط">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">العنوان</label>
+                                    <input type="text" class="form-control" id="companyAddress" value="الرياض، المملكة العربية السعودية">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">البريد الإلكتروني</label>
+                                    <input type="email" class="form-control" id="companyEmail" value="info@touq.sa">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">حقوق النشر</label>
+                                    <input type="text" class="form-control" id="copyrightText" value="© 2025 طوق للتقسيط. جميع الحقوق محفوظة">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Section -->
+                    <div class="preview-section" id="previewSection" style="display: none;">
+                        <h6>معاينة التغييرات:</h6>
+                        <div id="previewContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzY6WVHdZrECAIOaXO7Vyyz23Udzm2bfg",
+  authDomain: "salatek-bb9fd.firebaseapp.com",
+  databaseURL: "https://salatek-bb9fd-default-rtdb.firebaseio.com",
+  projectId: "salatek-bb9fd",
+  storageBucket: "salatek-bb9fd.firebasestorage.app",
+  messagingSenderId: "753883317449",
+  appId: "1:753883317449:web:421ce843a92cae23927918",
+  measurementId: "G-L2NW4MN4ZW"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Scroll to section
+                const sectionId = this.getAttribute('data-section');
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    // Smooth scroll for desktop, instant for mobile
+                    if (window.innerWidth > 991.98) {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        section.scrollIntoView({ behavior: 'auto' });
+                    }
+                }
+            });
+        });
+
+        // Load current content
+        async function loadCurrentContent() {
+            try {
+                const doc = await db.collection('websiteContent').doc('main').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    populateForm(data);
+                }
+            } catch (error) {
+                console.error('Error loading content:', error);
+                showStatus('خطأ في تحميل المحتوى', 'error');
+            }
+        }
+
+        // Populate form with data
+        function populateForm(data) {
+            // Hero Section
+            if (data.hero) {
+                document.getElementById('heroTitle').value = data.hero.title || 'طوق للتقسيط';
+                document.getElementById('heroSubtitle').value = data.hero.subtitle || 'حلول ذكية لجميع مشاكل التقسيط';
+                document.getElementById('heroMainHeading').value = data.hero.mainHeading || 'ما تحتاج تعيش حرب نفسية مع راتبك!';
+            }
+            
+            // Reviews
+            if (data.reviews) {
+                document.getElementById('reviewsTitle').value = data.reviews.title || 'آراء عملائنا الكرام';
+                document.getElementById('reviewsDescription').value = data.reviews.description || 'اكتشف ما يقوله عملاؤنا عن تجربتهم مع طوق للتقسيط';
+                
+                if (data.reviews.reviews) {
+                    data.reviews.reviews.forEach((review, index) => {
+                        const reviewNum = index + 1;
+                        if (document.getElementById(`review${reviewNum}Text`)) {
+                            document.getElementById(`review${reviewNum}Text`).value = review.text || '';
+                            document.getElementById(`review${reviewNum}Name`).value = review.name || '';
+                            document.getElementById(`review${reviewNum}City`).value = review.city || '';
+                        }
+                    });
+                }
+            }
+            
+            // Features
+            if (data.features) {
+                data.features.forEach((feature, index) => {
+                    const featureNum = index + 1;
+                    if (document.getElementById(`feature${featureNum}Icon`)) {
+                        document.getElementById(`feature${featureNum}Icon`).value = feature.icon || '';
+                        document.getElementById(`feature${featureNum}Title`).value = feature.title || '';
+                        document.getElementById(`feature${featureNum}Desc`).value = feature.description || '';
+                    }
+                });
+            }
+            
+            // Banner
+            if (data.banner) {
+                document.getElementById('bannerTitle').value = data.banner.title || 'اطلب اللي بخاطرك من طوق للتقسيط';
+                document.getElementById('bannerSubtitle').value = data.banner.subtitle || 'والموافقة فورية إذا كنت';
+                document.getElementById('bannerHighlight').value = data.banner.highlight || 'سعودي موظف عمرك 20+';
+                document.getElementById('bannerButtonText').value = data.banner.buttonText || 'للطلب اضغط هنا';
+            }
+            
+            // Stats
+            if (data.stats) {
+                data.stats.forEach((stat, index) => {
+                    const statNum = index + 1;
+                    if (document.getElementById(`stat${statNum}Number`)) {
+                        document.getElementById(`stat${statNum}Number`).value = stat.number || '';
+                        document.getElementById(`stat${statNum}Label`).value = stat.label || '';
+                    }
+                });
+            }
+            
+            // Benefits
+            if (data.benefits) {
+                document.getElementById('benefitsTitle').value = data.benefits.title || 'مميزات تجعلك تختارنا';
+                
+                if (data.benefits.benefits) {
+                    data.benefits.benefits.forEach((benefit, index) => {
+                        const benefitNum = index + 1;
+                        if (document.getElementById(`benefit${benefitNum}Icon`)) {
+                            document.getElementById(`benefit${benefitNum}Icon`).value = benefit.icon || '';
+                            document.getElementById(`benefit${benefitNum}Text`).value = benefit.text || '';
+                        }
+                    });
+                }
+            }
+            
+            // About
+            if (data.about) {
+                document.getElementById('aboutTitle').value = data.about.title || '';
+                document.getElementById('aboutSubtitle').value = data.about.subtitle || '';
+                document.getElementById('aboutDescription').value = data.about.description || '';
+            }
+            
+            // Order Form
+            if (data.order) {
+                document.getElementById('orderTitle').value = data.order.title || 'تقديم الطلب';
+                document.getElementById('orderDescription').value = data.order.description || 'اطلب جهازك المفضل الآن واستمتع بأسهل طرق التقسيط';
+                document.getElementById('orderButtonText').value = data.order.buttonText || 'إرسال الطلب على الواتساب';
+                document.getElementById('orderSuccessMessage').value = data.order.successMessage || 'تم إرسال طلبك بنجاح! سيتم فتح الواتساب الآن.';
+                document.getElementById('whatsappMessageTemplate').value = data.order.whatsappMessageTemplate || '';
+                document.getElementById('deviceOptions').value = data.order.deviceOptions || '';
+            }
+            
+            // CTA
+            if (data.cta) {
+                document.getElementById('ctaTitle').value = data.cta.title || '';
+                document.getElementById('ctaDescription').value = data.cta.description || '';
+                document.getElementById('whatsappButtonText').value = data.cta.whatsappText || '';
+                document.getElementById('callButtonText').value = data.cta.callText || '';
+                document.getElementById('shopButtonText').value = data.cta.shopText || '';
+            }
+            
+            // Footer
+            if (data.footer) {
+                document.getElementById('footerDescription').value = data.footer.description || '';
+                document.getElementById('footerAddress').value = data.footer.address || '';
+                document.getElementById('footerQuickLinksTitle').value = data.footer.quickLinksTitle || 'روابط سريعة';
+                document.getElementById('footerServicesTitle').value = data.footer.servicesTitle || 'خدماتنا';
+                document.getElementById('footerContactTitle').value = data.footer.contactTitle || 'معلومات الاتصال';
+                document.getElementById('footerServices').value = data.footer.services || '';
+                document.getElementById('footerQuickLinks').value = data.footer.quickLinks || '';
+            }
+            
+            // Moving Text
+            if (data.movingText) {
+                if (data.movingText.texts) {
+                    data.movingText.texts.forEach((text, index) => {
+                        const textNum = index + 1;
+                        if (document.getElementById(`movingText${textNum}`)) {
+                            document.getElementById(`movingText${textNum}`).value = text || '';
+                        }
+                    });
+                }
+                if (data.movingText.speed) {
+                    document.getElementById('movingTextSpeed').value = data.movingText.speed || 30;
+                }
+            }
+            
+            // Social Media
+            if (data.socialMedia) {
+                document.getElementById('socialMediaTitle').value = data.socialMedia.title || 'تواصل معنا على وسائل التواصل الاجتماعي';
+                document.getElementById('socialMediaStyle').value = data.socialMedia.style || 'horizontal';
+                document.getElementById('socialMediaSize').value = data.socialMedia.size || 'medium';
+                document.getElementById('socialMediaColor').value = data.socialMedia.color || '#3A6F8F';
+                document.getElementById('socialMediaBgColor').value = data.socialMedia.bgColor || '#F7F5F0';
+                
+                if (data.socialMedia.platforms) {
+                    data.socialMedia.platforms.forEach(platform => {
+                        const iconEl = document.getElementById(`${platform.name}Icon`);
+                        const textEl = document.getElementById(`${platform.name}Text`);
+                        const linkEl = document.getElementById(`${platform.name}Link`);
+                        const statusEl = document.getElementById(`${platform.name}Status`);
+                        
+                        if (iconEl) iconEl.value = platform.icon || '';
+                        if (textEl) textEl.value = platform.text || '';
+                        if (linkEl) linkEl.value = platform.link || '';
+                        if (statusEl) statusEl.value = platform.status || 'active';
+                    });
+                }
+            }
+            
+            // Settings
+            if (data.settings) {
+                document.getElementById('footerCompanyName').value = data.settings.companyName || '';
+                document.getElementById('companyAddress').value = data.settings.address || '';
+                document.getElementById('companyEmail').value = data.settings.email || '';
+                document.getElementById('copyrightText').value = data.settings.copyright || '';
+            }
+            
+            // WhatsApp Number
+            if (data.whatsappNumber) {
+                document.getElementById('whatsappNumber').value = data.whatsappNumber;
+            }
+        }
+
+        // Save all changes
+        async function saveAllChanges() {
+            try {
+                showStatus('جاري الحفظ...', 'info');
+                
+                const data = {
+                    hero: {
+                        title: document.getElementById('heroTitle').value,
+                        subtitle: document.getElementById('heroSubtitle').value,
+                        mainHeading: document.getElementById('heroMainHeading').value
+                    },
+                    reviews: {
+                        title: document.getElementById('reviewsTitle').value,
+                        description: document.getElementById('reviewsDescription').value,
+                        reviews: [
+                            {
+                                text: document.getElementById('review1Text').value,
+                                name: document.getElementById('review1Name').value,
+                                city: document.getElementById('review1City').value
+                            },
+                            {
+                                text: document.getElementById('review2Text').value,
+                                name: document.getElementById('review2Name').value,
+                                city: document.getElementById('review2City').value
+                            },
+                            {
+                                text: document.getElementById('review3Text').value,
+                                name: document.getElementById('review3Name').value,
+                                city: document.getElementById('review3City').value
+                            },
+                            {
+                                text: document.getElementById('review4Text').value,
+                                name: document.getElementById('review4Name').value,
+                                city: document.getElementById('review4City').value
+                            }
+                        ]
+                    },
+                    features: [
+                        {
+                            icon: document.getElementById('feature1Icon').value,
+                            title: document.getElementById('feature1Title').value,
+                            description: document.getElementById('feature1Desc').value
+                        },
+                        {
+                            icon: document.getElementById('feature2Icon').value,
+                            title: document.getElementById('feature2Title').value,
+                            description: document.getElementById('feature2Desc').value
+                        },
+                        {
+                            icon: document.getElementById('feature3Icon').value,
+                            title: document.getElementById('feature3Title').value,
+                            description: document.getElementById('feature3Desc').value
+                        },
+                        {
+                            icon: document.getElementById('feature4Icon').value,
+                            title: document.getElementById('feature4Title').value,
+                            description: document.getElementById('feature4Desc').value
+                        }
+                    ],
+                    banner: {
+                        title: document.getElementById('bannerTitle').value,
+                        subtitle: document.getElementById('bannerSubtitle').value,
+                        highlight: document.getElementById('bannerHighlight').value,
+                        buttonText: document.getElementById('bannerButtonText').value
+                    },
+                    stats: [
+                        {
+                            number: document.getElementById('stat1Number').value,
+                            label: document.getElementById('stat1Label').value
+                        },
+                        {
+                            number: document.getElementById('stat2Number').value,
+                            label: document.getElementById('stat2Label').value
+                        },
+                        {
+                            number: document.getElementById('stat3Number').value,
+                            label: document.getElementById('stat3Label').value
+                        }
+                    ],
+                    benefits: {
+                        title: document.getElementById('benefitsTitle').value,
+                        benefits: [
+                            {
+                                icon: document.getElementById('benefit1Icon').value,
+                                text: document.getElementById('benefit1Text').value
+                            },
+                            {
+                                icon: document.getElementById('benefit2Icon').value,
+                                text: document.getElementById('benefit2Text').value
+                            },
+                            {
+                                icon: document.getElementById('benefit3Icon').value,
+                                text: document.getElementById('benefit3Text').value
+                            },
+                            {
+                                icon: document.getElementById('benefit4Icon').value,
+                                text: document.getElementById('benefit4Text').value
+                            }
+                        ]
+                    },
+                    about: {
+                        title: document.getElementById('aboutTitle').value,
+                        subtitle: document.getElementById('aboutSubtitle').value,
+                        description: document.getElementById('aboutDescription').value
+                    },
+                    order: {
+                        title: document.getElementById('orderTitle').value,
+                        description: document.getElementById('orderDescription').value,
+                        buttonText: document.getElementById('orderButtonText').value,
+                        successMessage: document.getElementById('orderSuccessMessage').value,
+                        whatsappMessageTemplate: document.getElementById('whatsappMessageTemplate').value,
+                        deviceOptions: document.getElementById('deviceOptions').value
+                    },
+                    cta: {
+                        title: document.getElementById('ctaTitle').value,
+                        description: document.getElementById('ctaDescription').value,
+                        whatsappText: document.getElementById('whatsappButtonText').value,
+                        callText: document.getElementById('callButtonText').value,
+                        shopText: document.getElementById('shopButtonText').value
+                    },
+                    footer: {
+                        description: document.getElementById('footerDescription').value,
+                        address: document.getElementById('footerAddress').value,
+                        quickLinksTitle: document.getElementById('footerQuickLinksTitle').value,
+                        servicesTitle: document.getElementById('footerServicesTitle').value,
+                        contactTitle: document.getElementById('footerContactTitle').value,
+                        services: document.getElementById('footerServices').value,
+                        quickLinks: document.getElementById('footerQuickLinks').value
+                    },
+                    movingText: {
+                        texts: [
+                            document.getElementById('movingText1').value,
+                            document.getElementById('movingText2').value,
+                            document.getElementById('movingText3').value,
+                            document.getElementById('movingText4').value,
+                            document.getElementById('movingText5').value,
+                            document.getElementById('movingText6').value,
+                            document.getElementById('movingText7').value,
+                            document.getElementById('movingText8').value
+                        ],
+                        speed: document.getElementById('movingTextSpeed').value
+                    },
+                    socialMedia: {
+                        title: document.getElementById('socialMediaTitle').value,
+                        platforms: [
+                            {
+                                name: 'whatsapp',
+                                icon: document.getElementById('whatsappIcon').value,
+                                text: document.getElementById('whatsappText').value,
+                                link: document.getElementById('whatsappLink').value,
+                                status: document.getElementById('whatsappStatus').value
+                            },
+                            {
+                                name: 'twitter',
+                                icon: document.getElementById('twitterIcon').value,
+                                text: document.getElementById('twitterText').value,
+                                link: document.getElementById('twitterLink').value,
+                                status: document.getElementById('twitterStatus').value
+                            },
+                            {
+                                name: 'instagram',
+                                icon: document.getElementById('instagramIcon').value,
+                                text: document.getElementById('instagramText').value,
+                                link: document.getElementById('instagramLink').value,
+                                status: document.getElementById('instagramStatus').value
+                            },
+                            {
+                                name: 'snapchat',
+                                icon: document.getElementById('snapchatIcon').value,
+                                text: document.getElementById('snapchatText').value,
+                                link: document.getElementById('snapchatLink').value,
+                                status: document.getElementById('snapchatStatus').value
+                            },
+                            {
+                                name: 'facebook',
+                                icon: document.getElementById('facebookIcon').value,
+                                text: document.getElementById('facebookText').value,
+                                link: document.getElementById('facebookLink').value,
+                                status: document.getElementById('facebookStatus').value
+                            },
+                            {
+                                name: 'youtube',
+                                icon: document.getElementById('youtubeIcon').value,
+                                text: document.getElementById('youtubeText').value,
+                                link: document.getElementById('youtubeLink').value,
+                                status: document.getElementById('youtubeStatus').value
+                            },
+                            {
+                                name: 'linkedin',
+                                icon: document.getElementById('linkedinIcon').value,
+                                text: document.getElementById('linkedinText').value,
+                                link: document.getElementById('linkedinLink').value,
+                                status: document.getElementById('linkedinStatus').value
+                            },
+                            {
+                                name: 'tiktok',
+                                icon: document.getElementById('tiktokIcon').value,
+                                text: document.getElementById('tiktokText').value,
+                                link: document.getElementById('tiktokLink').value,
+                                status: document.getElementById('tiktokStatus').value
+                            },
+                            {
+                                name: 'telegram',
+                                icon: document.getElementById('telegramIcon').value,
+                                text: document.getElementById('telegramText').value,
+                                link: document.getElementById('telegramLink').value,
+                                status: document.getElementById('telegramStatus').value
+                            }
+                        ],
+                        style: document.getElementById('socialMediaStyle').value,
+                        size: document.getElementById('socialMediaSize').value,
+                        color: document.getElementById('socialMediaColor').value,
+                        bgColor: document.getElementById('socialMediaBgColor').value
+                    },
+                    settings: {
+                        companyName: document.getElementById('footerCompanyName').value,
+                        address: document.getElementById('companyAddress').value,
+                        email: document.getElementById('companyEmail').value,
+                        copyright: document.getElementById('copyrightText').value
+                    },
+                    whatsappNumber: document.getElementById('whatsappNumber').value,
+                    lastUpdated: new Date()
+                };
+                
+                await db.collection('websiteContent').doc('main').set(data);
+                
+                showStatus('تم حفظ جميع التغييرات بنجاح! 🎉', 'success');
+                
+                // Update main website
+                updateMainWebsite(data);
+                
+            } catch (error) {
+                console.error('Error saving content:', error);
+                showStatus('خطأ في حفظ المحتوى', 'error');
+            }
+        }
+
+        // Update main website
+        function updateMainWebsite(data) {
+            // Send message to main website iframe or parent window
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'UPDATE_WEBSITE_CONTENT',
+                    data: data
+                }, '*');
+            }
+            
+            // Also save to localStorage for immediate preview
+            localStorage.setItem('websiteContent', JSON.stringify(data));
+        }
+
+        // Preview changes
+        function previewChanges() {
+            const previewSection = document.getElementById('previewSection');
+            const previewContent = document.getElementById('previewContent');
+            
+            if (previewSection.style.display === 'none') {
+                previewSection.style.display = 'block';
+                
+                const previewData = {
+                    hero: {
+                        title: document.getElementById('heroTitle').value,
+                        subtitle: document.getElementById('heroSubtitle').value,
+                        mainHeading: document.getElementById('heroMainHeading').value
+                    },
+                    reviews: {
+                        title: document.getElementById('reviewsTitle').value,
+                        description: document.getElementById('reviewsDescription').value
+                    },
+                    features: [
+                        {
+                            icon: document.getElementById('feature1Icon').value,
+                            title: document.getElementById('feature1Title').value,
+                            description: document.getElementById('feature1Desc').value
+                        },
+                        {
+                            icon: document.getElementById('feature2Icon').value,
+                            title: document.getElementById('feature2Title').value,
+                            description: document.getElementById('feature2Desc').value
+                        },
+                        {
+                            icon: document.getElementById('feature3Icon').value,
+                            title: document.getElementById('feature3Title').value,
+                            description: document.getElementById('feature3Desc').value
+                        },
+                        {
+                            icon: document.getElementById('feature4Icon').value,
+                            title: document.getElementById('feature4Title').value,
+                            description: document.getElementById('feature4Desc').value
+                        }
+                    ],
+                    banner: {
+                        title: document.getElementById('bannerTitle').value,
+                        subtitle: document.getElementById('bannerSubtitle').value,
+                        highlight: document.getElementById('bannerHighlight').value
+                    },
+                    benefits: {
+                        title: document.getElementById('benefitsTitle').value
+                    },
+                    order: {
+                        title: document.getElementById('orderTitle').value,
+                        description: document.getElementById('orderDescription').value
+                    },
+                    socialMedia: {
+                        title: document.getElementById('socialMediaTitle').value,
+                        style: document.getElementById('socialMediaStyle').value,
+                        size: document.getElementById('socialMediaSize').value,
+                        color: document.getElementById('socialMediaColor').value,
+                        bgColor: document.getElementById('socialMediaBgColor').value
+                    }
+                };
+                
+                let previewHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>الصفحة الرئيسية:</h6>
+                            <p><strong>العنوان:</strong> ${previewData.hero.title}</p>
+                            <p><strong>العنوان الفرعي:</strong> ${previewData.hero.subtitle}</p>
+                            <p><strong>العنوان الثانوي:</strong> ${previewData.hero.mainHeading}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>المراجعات:</h6>
+                            <p><strong>العنوان:</strong> ${previewData.reviews.title}</p>
+                            <p><strong>الوصف:</strong> ${previewData.reviews.description}</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>المميزات:</h6>
+                            ${previewData.features.map(feature => 
+                                `<p><i class="${feature.icon}"></i> <strong>${feature.title}:</strong> ${feature.description}</p>`
+                            ).join('')}
+                        </div>
+                        <div class="col-md-6">
+                            <h6>البانر:</h6>
+                            <p><strong>العنوان:</strong> ${previewData.banner.title}</p>
+                            <p><strong>العنوان الفرعي:</strong> ${previewData.banner.subtitle}</p>
+                            <p><strong>النص المميز:</strong> ${previewData.banner.highlight}</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>المميزات الإضافية:</h6>
+                            <p><strong>العنوان:</strong> ${previewData.benefits.title}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>نموذج الطلب:</h6>
+                            <p><strong>العنوان:</strong> ${previewData.order.title}</p>
+                            <p><strong>الوصف:</strong> ${previewData.order.description}</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>وسائل التواصل الاجتماعي:</h6>
+                            <p><strong>العنوان:</strong> ${previewData.socialMedia.title}</p>
+                            <p><strong>نمط العرض:</strong> ${previewData.socialMedia.style}</p>
+                            <p><strong>حجم الأيقونات:</strong> ${previewData.socialMedia.size}</p>
+                            <p><strong>لون الأيقونات:</strong> <span style="color: ${previewData.socialMedia.color};">${previewData.socialMedia.color}</span></p>
+                        </div>
+                    </div>
+                `;
+                
+                previewContent.innerHTML = previewHTML;
+            } else {
+                previewSection.style.display = 'none';
+            }
+        }
+
+        // Show status messages
+        function showStatus(message, type = 'info') {
+            const statusContainer = document.getElementById('statusMessages');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+            statusDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            statusContainer.appendChild(statusDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (statusDiv.parentElement) {
+                    statusDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Load content when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCurrentContent();
+            initializeMobileMenu();
+        });
+        
+        // Initialize Mobile Menu
+        function initializeMobileMenu() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            // Toggle mobile menu
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                sidebarOverlay.classList.toggle('show');
+                document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : 'auto';
+            });
+            
+            // Close menu when clicking overlay
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Close menu when clicking on a nav link (mobile)
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 991.98) {
+                        sidebar.classList.remove('show');
+                        sidebarOverlay.classList.remove('show');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 991.98) {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+        
+        // Login System
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            if (localStorage.getItem('adminLoggedIn') === 'true') {
+                showAdminPanel();
+            }
+            
+            // Login form submission
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                if (email === 'admin@toq' && password === '123456') {
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    showAdminPanel();
+                    showStatus('تم تسجيل الدخول بنجاح!', 'success');
+                } else {
+                    showStatus('بيانات الدخول غير صحيحة!', 'error');
+                    document.getElementById('password').value = '';
+                }
+            });
+            
+            // Password toggle
+            document.getElementById('passwordToggle').addEventListener('click', function() {
+                const passwordInput = document.getElementById('password');
+                const icon = this.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    passwordInput.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            });
+        });
+        
+        function showAdminPanel() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadCurrentContent();
+            initializeMobileMenu();
+        }
+        
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+    </script>
+    </div> <!-- Close admin-container -->
+</body>
+</html>
