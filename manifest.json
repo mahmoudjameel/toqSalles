@@ -1,0 +1,39 @@
+{
+    "name": "طوق للتقسيط",
+    "short_name": "طوق",
+    "description": "أفضل منصة تقسيط الأجهزة في السعودية",
+    "start_url": "https://www.toq1.com/",
+    "display": "standalone",
+    "background_color": "#F7F5F0",
+    "theme_color": "#3A6F8F",
+    "orientation": "portrait-primary",
+    "scope": "https://www.toq1.com/",
+    "lang": "ar",
+    "dir": "rtl",
+    "icons": [
+        {
+            "src": "https://www.toq1.com/Test.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "https://www.toq1.com/Test.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["business", "finance", "shopping"],
+    "screenshots": [
+        {
+            "src": "https://www.toq1.com/screenshot1.jpg",
+            "sizes": "1280x720",
+            "type": "image/jpeg",
+            "platform": "wide",
+            "label": "الصفحة الرئيسية"
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+}

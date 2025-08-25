@@ -36,6 +36,18 @@
 # منع عرض محتويات المجلدات
 Options -Indexes
 
+# إضافة robots.txt
+RewriteRule ^robots\.txt$ robots.txt [L]
+
+# إضافة sitemap.xml
+RewriteRule ^sitemap\.xml$ sitemap.xml [L]
+
+# إضافة manifest.json
+RewriteRule ^manifest\.json$ manifest.json [L]
+
+# إضافة humans.txt
+RewriteRule ^humans\.txt$ humans.txt [L]
+
 # ضغط الملفات
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/plain

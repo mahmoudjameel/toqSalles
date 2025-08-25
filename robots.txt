@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# السماح بفهرسة جميع الصفحات
+Allow: /index.html
+Allow: /admin.html
+
+# منع فهرسة ملفات النظام
+Disallow: /.htaccess
+Disallow: /.DS_Store
+Disallow: /.git/
+
+# Sitemap
+Sitemap: https://www.toq1.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
