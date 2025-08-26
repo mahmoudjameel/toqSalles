@@ -19,10 +19,8 @@ import WhatsAppFloat from './components/WhatsAppFloat';
 import AdminPanel from './pages/AdminPanel';
 import SEOManager from './components/SEOManager';
 import FAQ from './components/FAQ';
-import SiteMap from './components/SiteMap';
 import GoogleAnalytics from './components/GoogleAnalytics';
 import './styles/App.css';
-import './styles/SEO.css';
 
 function App() {
   return (
@@ -48,7 +46,6 @@ function App() {
                   <ReturnPolicy />
                   <OrderForm />
                   <FAQ />
-                  <SiteMap />
                   <CTASection />
                   <Footer />
                   <WhatsAppFloat />

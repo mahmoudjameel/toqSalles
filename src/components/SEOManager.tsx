@@ -25,10 +25,15 @@ const SEOManager: React.FC<SEOManagerProps> = ({
   const defaultTitle = websiteData.hero?.title || "طوق للتقسيط - تقسيط مريح وسهل للأجهزة الإلكترونية";
   const defaultDescription = websiteData.about?.description || "منصة التقسيط الميسر للأجهزة الإلكترونية والمنزلية في المملكة العربية السعودية";
   const defaultKeywords = "تقسيط، جوالات، لابتوبات، أجهزة إلكترونية، السعودية، طوق للتقسيط";
-  const defaultImage = "https://toq.sa/Test.png";
-  const defaultUrl = "https://toq.sa";
+  const defaultImage = "/Test.png";
+  const defaultUrl = "/";
 
-  const finalTitle = pageTitle || defaultTitle;
+  // Enhanced title for better browser tab display
+  const enhancedTitle = websiteData.hero?.title 
+    ? `${websiteData.hero.title} | طوق للتقسيط`
+    : "طوق للتقسيط | تقسيط الأجهزة الإلكترونية في السعودية";
+
+  const finalTitle = pageTitle || enhancedTitle;
   const finalDescription = pageDescription || defaultDescription;
   const finalKeywords = pageKeywords || defaultKeywords;
   const finalImage = pageImage || defaultImage;
@@ -46,6 +51,12 @@ const SEOManager: React.FC<SEOManagerProps> = ({
       <meta name="revisit-after" content="7 days" />
       <meta name="rating" content="general" />
       <meta name="distribution" content="global" />
+      
+      {/* Additional SEO Meta Tags */}
+      <meta name="application-name" content="طوق للتقسيط" />
+      <meta name="apple-mobile-web-app-title" content="طوق للتقسيط" />
+      <meta name="msapplication-TileTitle" content="طوق للتقسيط" />
+      <meta name="msapplication-config" content="/browserconfig.xml" />
       
       {/* Canonical URL */}
       <link rel="canonical" href={finalUrl} />

@@ -25,10 +25,15 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   const defaultTitle = websiteData.hero?.title || "طوق للتقسيط - تقسيط مريح وسهل للأجهزة الإلكترونية";
   const defaultDescription = websiteData.about?.description || "منصة التقسيط الميسر للأجهزة الإلكترونية والمنزلية في المملكة العربية السعودية";
   const defaultKeywords = "تقسيط، جوالات، لابتوبات، أجهزة إلكترونية، السعودية، طوق للتقسيط";
-  const defaultImage = "https://toq.sa/Test.png";
-  const defaultUrl = "https://toq.sa";
+  const defaultImage = "/Test.png";
+  const defaultUrl = "/";
 
-  const finalTitle = title || defaultTitle;
+  // Enhanced title for better browser tab display
+  const enhancedTitle = websiteData.hero?.title 
+    ? `${websiteData.hero.title} | طوق للتقسيط`
+    : "طوق للتقسيط | تقسيط الأجهزة الإلكترونية في السعودية";
+
+  const finalTitle = title || enhancedTitle;
   const finalDescription = description || defaultDescription;
   const finalKeywords = keywords || defaultKeywords;
   const finalImage = image || defaultImage;

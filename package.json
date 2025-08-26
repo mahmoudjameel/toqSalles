@@ -61,7 +61,6 @@
   ],
   "author": "طوق للتقسيط",
   "license": "MIT",
-  "homepage": "https://toq.sa",
   "devDependencies": {
     "@types/react-helmet-async": "^1.0.1"
   }

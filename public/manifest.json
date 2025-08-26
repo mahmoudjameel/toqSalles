@@ -1,6 +1,6 @@
 {
-  "name": "طوق للتقسيط",
-  "short_name": "طوق",
+  "name": "طوق للتقسيط | تقسيط الأجهزة الإلكترونية",
+  "short_name": "طوق للتقسيط",
   "description": "منصة التقسيط الميسر للأجهزة الإلكترونية والمنزلية في المملكة العربية السعودية",
   "start_url": "/",
   "display": "standalone",
@@ -14,12 +14,14 @@
     {
       "src": "/Test.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/Test.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
