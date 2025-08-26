@@ -1,0 +1,5 @@
+Contact: mailto:security@touq.sa
+Expires: 2026-01-26T00:00:00.000Z
+Preferred-Languages: ar, en
+Canonical: https://toq.sa/.well-known/security.txt
+Policy: https://toq.sa/security-policy

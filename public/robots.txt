@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow admin panel
+Disallow: /admin
+
+# Sitemap
+Sitemap: https://toq.sa/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
