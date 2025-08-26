@@ -11,7 +11,7 @@ Disallow: /.DS_Store
 Disallow: /.git/
 
 # Sitemap
-Sitemap: https://www.toq1.com/sitemap.xml
+Sitemap: https://toq.sa/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1

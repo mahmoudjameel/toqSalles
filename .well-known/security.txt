@@ -1,4 +1,4 @@
-Contact: mailto:security@toq1.com
+Contact: mailto:security@toq.sa
 Expires: 2026-01-27T00:00:00.000Z
 Preferred-Languages: ar, en
-Canonical: https://www.toq1.com/.well-known/security.txt
+Canonical: https://toq.sa/.well-known/security.txt
